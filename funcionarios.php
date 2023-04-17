@@ -1,3 +1,9 @@
+<?php
+    include('functions.php');
+    if(isset($_POST['submitFunc'])){
+        cadastrarFuncionario($_POST['nome'], $_POST['dtNasc'], $_POST['funcao'], $_POST['email'], $_POST['senha']);
+    }
+?>
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -33,7 +39,7 @@
         }
         .display{
             width: 85vw;
-            height: 80vh;
+            height: 90vh;
 
             background-color: var(--corPrimaria);
 
@@ -41,7 +47,7 @@
         }
         .displayHeader{
             width: 85vw;
-            height: 10vh;
+            height: 7vh;
 
             display: flex;
             align-items: center;
@@ -50,13 +56,13 @@
             border-bottom: 1px solid var(--textColor);
         }
         .displayContent{
-            width: 85vw;
+            width: 90vw;
             display: flex;
             align-items: center;
         }
         .sidebar{
             width: 15vw;
-            height: 70vh;
+            height: 83vh;
             display: flex;
             flex-direction: column;
 
@@ -64,7 +70,7 @@
         }
         .nav{
             width: 70vw;
-            height: 60vh;
+            height: 83vh;
             display: flex;
             flex-direction: column-reverse;
 
@@ -95,6 +101,33 @@
             text-align: center;
             padding: 0.5rem;
         }
+        .form{
+            display: flex;
+            flex-direction: column;
+
+            gap: 0.5rem;
+        }
+        input{
+            outline: none;
+            color: var(--corSecundaria);
+        }
+        input::placeholder{
+            color: var(--corSecundaria);
+        }
+        button{
+            height: 3rem;
+            background-color: var(--corPrimaria);
+            border: 1px solid var(--corSecundaria);
+            cursor: pointer;
+            transition: 1s;
+
+            font-size: 18px;
+        }
+        button:hover{
+            background-color: var(--textColor);
+            color: var(--corSecundaria);
+            border: 1px solid var(--corPrimaria);
+        }
     </style>
 </head>
 <body>
@@ -106,64 +139,56 @@
             <div class="displayContent">
                     <div class="sidebar">
                         <div class="item"><a href="home.php">Visão geral</a></div>
-                        <div class="item"><a href="funcionarios.php">Funcionário</a></div>
+                        <div class="item"><a href="">Funcionário</a></div>
                         <div class="item"><a href="">Cliente</a></div>
                         <div class="item" style="border: none;"><a href="">Carro</a></div>
                     </div>
                     <div class="nav">
                         <table>
-                            <caption>Visão Geral</caption>
+                            <caption>Funcionários</caption>
                             <thead>
                                 <tr>
-                                    <th scope="col">Cd cliente</th>
+                                    <th scope="col">Cd funcionários</th>
                                     <th scope="col">Nome</th>
-                                    <th scope="col">Vaga</th>
-                                    <th scope="col">Cor</th>
-                                    <th scope="col">Marca</th>
+                                    <th scope="col">Dt_nasc</th>
+                                    <th scope="col">Função</th>
+                                    <th scope="col">Email</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php
-                                    include('functions.php');
-                                    $pp = 7;
-                                    $sql = 'SELECT * FROM vwvisaoGeral';
-                                    $res = $conn->query($sql);
+                                    $pp = 3;
+                                    $sql = 'SELECT idFuncionario, substring_index(nome, "", 1) AS PrimeiroNome, substring_index(nome, "", -1) AS UltimoNome, dtnasc, função, email
+                                    FROM funcionario';
+                                    $res = $GLOBALS['conn']->query($sql);
                                     $total = $res->num_rows;
                                     $pgs = ceil($total/$pp);
 
                                     $atual = isset($_GET['pag']) ? $_GET['pag'] : 1;
                                     $atual = ($pp*$atual) - $pp;
 
-                                    $sql = "SELECT * FROM vwvisaogeral LIMIT $atual, $pp";
-                                    $res = $conn->query($sql);
+                                    $sql = 'SELECT idFuncionario, substring_index(nome, " ", 1) AS PrimeiroNome, substring_index(nome, " ", -1) AS UltimoNome, dtnasc, função, email FROM funcionario LIMIT '.$atual.', '.$pp;
+                                    $res = $GLOBALS['conn']->query($sql);
 
-                                    while($vw = $res->fetch_object()){
-                                        if($vw->tipoDaVaga == 1){
-                                            $vaga = 'Mensal';
-                                        } else if($vw->tipoDaVaga == 2){
-                                            $vaga = 'Inidividual';
-                                        } else{
-                                            $vaga = 'Conveniada';
-                                        }
+                                    while($func = $res->fetch_object()){
                                         echo '<tr>
                                                 <td>'.
-                                                    $vw->cdDoCliente.
+                                                    $func->idFuncionario.
                                                 '</td>
                                                 <td>'
-                                                    .$vw->nomeDoCliente.
+                                                    .$func->PrimeiroNome.' '.$func->UltimoNome.
                                                 '</td>
                                                 <td>'
-                                                    .$vaga.
+                                                    .$func->dtnasc.
                                                 '</td>   
                                                 <td>'
-                                                    .$vw->corDoCarro.
+                                                    .$func->função.
                                                 '</td>
                                                 <td>'
-                                                    .$vw->marcaDoCarro.
+                                                    .$func->email.
                                                 '</td>  
                                                </tr>';
                                     }
-                                    echo '<hr>';
 
                                     $atual = isset($_GET['pag']) ? $_GET['pag'] : 1;
                                     $inicio = ($atual-5) >=1 ? $atual-5 : 1;
@@ -177,6 +202,20 @@
                                 ?>
                             </tbody>
                         </table>
+                        <form action="" method="post" class="form">
+                            <legend><h1>Cadastrar Funcionário</h1></legend>
+                            <label for="nome">Digite o nome do funcionário:</label>
+                            <input type="text" id="nome" name="nome">
+                            <label for="dtNasc">Data de nascimento:</label>
+                            <input type="date" id="dtNasc" name="dtNasc">
+                            <label for="funcao">Função:</label>
+                            <input type="text" name="funcao" id="funcao">
+                            <label for="email">Digite o email:</label>
+                            <input type="email" name="email" id="email">
+                            <label for="senha">Digite a senha:</label>
+                            <input type="password" name="senha" id="senha">
+                            <button type="submit" name="submitFunc">Cadastrar</button>
+                        </form>
                     </div>
             </div>
         </div>
