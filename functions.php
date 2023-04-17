@@ -16,7 +16,7 @@
                 #msgLogin{
                     background-color: green;
                     color: white;
-                    width: 100vw;
+                    width: 100%;
                     padding: 3rem;
                 }
             </style>

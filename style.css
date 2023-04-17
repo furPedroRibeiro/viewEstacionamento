@@ -4,11 +4,18 @@
     box-sizing: border-box;
     font-size: 18px;
     font-family: Arial, Helvetica, sans-serif;
+    color: var(--textColor);
+}
+:root{
+    --corPrimaria: rgb(91, 87, 87);
+    --corSecundaria: rgb(68, 67, 67);
+    --textColor: aliceblue;
 }
 main{
     width: 100vw;
     height: 100vh;
 
+    background-color: var(--corPrimaria);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -25,7 +32,7 @@ fieldset{
     justify-content: center;
     align-items: flex-start;
 
-    border: 1px solid black;
+    border: 1px solid var(--corSecundaria);
 
     width: 25rem;
 
@@ -50,9 +57,10 @@ legend{
 input{
     width: 100%;
 
-    border: 1px solid black;
+    border: 1px solid var(--corSecundaria);
     padding: 0.5rem;
     outline: none;
+    background-color: var(--corPrimaria);
 }
 button{
     margin-block: 1rem;
@@ -60,15 +68,15 @@ button{
     width: 100%;
     height: 3rem;
 
-    border: 1px solid black;
-    background-color: white;
+    border: 1px solid var(--corSecundaria);
+    background-color: var(--corPrimaria);
 
     transition: 1s;
 
     cursor: pointer;
 }
 button:hover{
-    border: 1px solid white;
-    background-color: black;
-    color: white;
+    border: 1px solid var(--corPrimaria);
+    background-color: var(--corSecundaria);
+    color: var(--textColor);
 }
